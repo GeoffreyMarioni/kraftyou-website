@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KraftYou Agency — Sites web cinématiques et agents IA pour votre business">
+<title>KraftYou — Sites web premium & Employés IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="module">
+  import Vapi from 'https://esm.sh/@vapi-ai/web@2.2.2';
+  window.Vapi = Vapi;
+  console.log('Vapi SDK chargé:', typeof window.Vapi);
+</script>
+<noscript><style>body{cursor:auto!important}.cursor-ring,.cursor-dot{display:none}</style></noscript>
+<style>
+/* ═══════════════════════════════════════
+   KRAFTYOU — DESIGN SYSTEM
+   ═══════════════════════════════════════ */
+:root {
+  --bg:       #0A0A0A;
+  --bg2:      #111111;
+  --bg3:      #181818;
+  --fg:       #F5F1E8;
+  --fg-dim:   rgba(245,241,232,0.5);
+  --fg-muted: rgba(245,241,232,0.28);
+  --coral:    #F2664A;
+  --coral-dim:rgba(242,102,74,0.12);
+  --coral-glow:rgba(242,102,74,0.25);
+  --border:   rgba(245,241,232,0.1);
+  --surface:  rgba(245,241,232,0.04);
+  --r:        1.5rem;
+  --rpill:    100px;
+  --ease:     cubic-bezier(0.25,0.46,0.45,0.94);
+  --ease-out: cubic-bezier(0,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:'Space Grotesk',system-ui,sans-serif;font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;cursor:none}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none;cursor:none}
+button{cursor:none;font-family:inherit;border:none;background:none}
+
+/* ── Curseur ── */
+.cursor-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(245,241,232,.45);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s var(--ease),height .3s var(--ease),border-color .3s;will-change:left,top}
+.cursor-dot{position:fixed;width:5px;height:5px;background:var(--fg);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);will-change:left,top}
+.cursor-ring.hover{width:64px;height:64px;border-color:rgba(242,102,74,.7)}
+
+/* ── Header ── */
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.5rem 2.5rem;display:flex;align-items:center;justify-content:space-between;transition:background .5s,backdrop-filter .5s}
+header.scrolled{background:rgba(10,10,10,.88);backdrop-filter:blur(20px)}
+.logo{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:300;letter-spacing:-.02em}
+.logo em{font-style:italic;color:var(--coral)}
+nav{display:flex;align-items:center;gap:.125rem}
+nav a{font-size:.8125rem;color:var(--fg-dim);padding:.5rem 1rem;border-radius:var(--rpill);transition:color .2s,background .2s}
+nav a:hover{color:var(--fg);background:var(--surface)}
+nav a.nav-live{color:var(--coral)}
+.btn-nav{display:inline-flex;align-items:center;gap:.5rem;padding:.625rem 1.5rem;border-radius:var(--rpill);background:var(--fg);color:var(--bg);font-size:.8125rem;font-weight:500;transition:background .25s,transform .2s}
+.btn-nav:hover{background:var(--coral);color:#fff;transform:scale(1.03)}
+
+/* ── Layout ── */
+.container{max-width:1400px;margin:0 auto;padding:0 2.5rem}
+section{padding:9rem 0}
+
+/* ── Reveal ── */
+.reveal{opacity:0;transform:translateY(44px);transition:opacity .85s var(--ease-out),transform .85s var(--ease-out)}
+.reveal.up{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}.d5{transition-delay:.5s}
+
+/* ── Label ── */
+.label{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem}
+.label-line{width:2.5rem;height:1px;background:var(--border);flex-shrink:0}
+.label-text{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim)}
+
+/* ── Section title ── */
+.s-title{font-family:'Fraunces',serif;font-size:clamp(3.5rem,8vw,7.5rem);font-weight:300;line-height:.95;letter-spacing:-.04em}
+.s-title em{font-style:italic;color:var(--coral)}
+
+/* ═══════════════
+   HERO
+═══════════════ */
+#hero{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 2.5rem 5rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 65% 40%,rgba(242,102,74,.07) 0%,transparent 60%),radial-gradient(ellipse at 20% 75%,rgba(139,101,217,.05) 0%,transparent 50%);pointer-events:none}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,241,232,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,241,232,.025) 1px,transparent 1px);background-size:80px 80px;pointer-events:none}
+.hero-meta{position:absolute;top:6.5rem;left:2.5rem;right:2.5rem;display:flex;justify-content:space-between;align-items:flex-start}
+.hero-tag{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-muted);display:flex;align-items:center;gap:.5rem}
+.hero-tag-dot{width:6px;height:6px;border-radius:50%;background:var(--coral);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero-title-area{position:relative}
+.hero-title{font-family:'Fraunces',serif;font-weight:300;font-size:clamp(5.5rem,18.5vw,18rem);line-height:.85;letter-spacing:-.045em;display:block}
+.hero-title .ch{display:inline-block;opacity:0;transform:translateY(.55em) rotate(-4deg);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
+.hero-title .ch.show{opacity:1;transform:translateY(0) rotate(0deg)}
+.hero-title-italic{font-style:italic}
+
+/* Orbe sculptural hero */
+.hero-orb-wrap{position:absolute;right:-2%;top:-18%;width:min(29%,420px);aspect-ratio:3/4;pointer-events:none;opacity:0;transition:opacity 1.2s ease .7s}
+.hero-orb-wrap.show{opacity:1}
+.hero-orb{position:absolute;inset:0;border-radius:60% 40% 70% 30% / 50% 60% 40% 70%}
+.o1{background:radial-gradient(ellipse at 35% 30%,rgba(245,241,232,.18) 0%,rgba(245,241,232,.04) 50%,transparent 70%);filter:blur(35px);animation:morph 11s ease-in-out infinite}
+.o2{background:radial-gradient(ellipse at 62% 65%,rgba(242,102,74,.28) 0%,transparent 60%);filter:blur(22px);animation:morph 14s ease-in-out infinite reverse;animation-delay:-4s}
+.o3{border:1px solid rgba(245,241,232,.07);filter:blur(1px);animation:morph 8s ease-in-out infinite;animation-delay:-2s}
+@keyframes morph{
+  0%,100%{border-radius:60% 40% 70% 30%/50% 60% 40% 70%;transform:scale(1) rotate(0deg)}
+  33%{border-radius:70% 30% 50% 50%/30% 70% 50% 60%;transform:scale(1.04) rotate(4deg)}
+  66%{border-radius:40% 60% 30% 70%/60% 30% 70% 40%;transform:scale(.97) rotate(-3deg)}
+}
+
+.hero-bottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:2.5rem;gap:2rem}
+.hero-tagline{font-size:clamp(.95rem,1.8vw,1.2rem);font-weight:300;color:var(--fg-dim);max-width:480px;line-height:1.65;opacity:0;transform:translateY(18px);transition:opacity .8s ease 1.3s,transform .8s ease 1.3s}
+.hero-tagline.show{opacity:1;transform:translateY(0)}
+.hero-cta-wrap{opacity:0;transform:translateY(18px);transition:opacity .8s ease 1.55s,transform .8s ease 1.55s}
+.hero-cta-wrap.show{opacity:1;transform:translateY(0)}
+.btn-hero{display:inline-flex;align-items:center;gap:.875rem;padding:1rem 2.25rem;border:1px solid var(--border);border-radius:var(--rpill);font-size:.875rem;color:var(--fg-dim);transition:border-color .3s,color .3s,gap .3s,background .3s}
+.btn-hero:hover{border-color:var(--coral);color:var(--fg);gap:1.5rem;background:rgba(242,102,74,.07)}
+.hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;animation:fadeIn 1s ease 2.2s forwards}
+.hero-scroll-line{width:1px;height:56px;background:linear-gradient(to bottom,var(--border),transparent);animation:scrollPulse 2.5s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:0;transform:scaleY(0);transform-origin:top}50%{opacity:1;transform:scaleY(1);transform-origin:top}}
+@keyframes fadeIn{to{opacity:1}}
+
+/* ═══════════════
+   MARQUEE
+═══════════════ */
+.marquee-wrap{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.75rem 0;overflow:hidden;position:relative}
+.marquee-track{display:flex;width:max-content;gap:3rem;animation:marquee 32s linear infinite;white-space:nowrap}
+.marquee-item{display:flex;align-items:center;gap:3rem;font-family:'Fraunces',serif;font-size:clamp(1.2rem,2.4vw,1.7rem);font-weight:300;font-style:italic;color:rgba(245,241,232,.55);letter-spacing:-.01em}
+.m-sep{color:var(--coral);font-style:normal;font-size:.85rem}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mfade{position:absolute;top:0;bottom:0;width:7rem;pointer-events:none}
+.mfade-l{left:0;background:linear-gradient(to right,var(--bg),transparent)}
+.mfade-r{right:0;background:linear-gradient(to left,var(--bg),transparent)}
+
+/* ═══════════════
+   SERVICES
+═══════════════ */
+#services{background:var(--bg)}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:5rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.srv{display:flex;flex-direction:column;gap:1.5rem;padding:3rem 2.5rem;border-right:1px solid var(--border);position:relative;overflow:hidden;transition:background .4s}
+.srv:last-child{border-right:none}
+.srv-glow{position:absolute;top:-70px;left:50%;transform:translateX(-50%);width:220px;height:220px;border-radius:50%;filter:blur(60px);opacity:0;transition:opacity .5s;pointer-events:none}
+.srv:hover{background:rgba(245,241,232,.03)}
+.srv:hover .srv-glow{opacity:1}
+.srv:nth-child(1) .srv-glow{background:rgba(245,241,232,.12)}
+.srv:nth-child(2) .srv-glow{background:rgba(242,102,74,.3)}
+.srv:nth-child(3) .srv-glow{background:rgba(139,101,217,.25)}
+.srv-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:var(--fg-muted)}
+.srv-badge{display:inline-flex;align-items:center;padding:.25rem .875rem;border-radius:var(--rpill);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--border);color:var(--fg-dim);width:fit-content}
+.srv:nth-child(2) .srv-badge{border-color:rgba(242,102,74,.45);color:var(--coral)}
+.srv:nth-child(3) .srv-badge{border-color:rgba(139,101,217,.45);color:#a88ee0}
+.srv-title{font-family:'Fraunces',serif;font-size:2.25rem;font-weight:300;letter-spacing:-.03em;line-height:1.1}
+.srv-desc{font-size:.875rem;color:var(--fg-dim);line-height:1.7}
+.srv-list{list-style:none;display:flex;flex-direction:column;gap:.75rem;padding-top:1.5rem;border-top:1px solid var(--border);flex:1}
+.srv-list li{display:flex;align-items:center;gap:.75rem;font-size:.875rem;color:rgba(245,241,232,.8)}
+.srv-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:rgba(245,241,232,.35)}
+.srv:nth-child(2) .srv-dot{background:var(--coral)}
+.srv:nth-child(3) .srv-dot{background:#8b65d9}
+.srv-footer{display:flex;align-items:center;justify-content:space-between;padding-top:1.5rem;border-top:1px solid var(--border);margin-top:auto}
+.srv-price{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:300;letter-spacing:-.02em}
+.srv-arrow{width:2.5rem;height:2.5rem;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:border-color .3s,background .3s,color .3s,transform .3s}
+.srv:hover .srv-arrow{border-color:var(--fg);background:var(--fg);color:var(--bg);transform:rotate(-45deg)}
+
+/* ═══════════════
+   CHAT DEMO
+═══════════════ */
+#chat-demo{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.chat-layout{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+.chat-widget{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.chat-hdr{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.chat-agent-info{display:flex;align-items:center;gap:.875rem}
+.chat-av{width:2.5rem;height:2.5rem;border-radius:50%;background:linear-gradient(135deg,var(--coral),rgba(242,102,74,.4));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:1.125rem;position:relative}
+.chat-av-dot{position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;background:#10b981;border-radius:50%;border:2px solid var(--bg3);animation:pulse-g 1.5s ease-in-out infinite}
+@keyframes pulse-g{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.85);opacity:.55}}
+.chat-name{font-size:.875rem;font-weight:500}
+.chat-status{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-muted);margin-top:.1rem}
+.live-badge{display:flex;align-items:center;gap:.4rem;padding:.25rem .75rem;border-radius:var(--rpill);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#10b981;animation:pulse-g 1.5s ease-in-out infinite}
+.live-txt{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:#10b981}
+.chat-msgs{padding:1.5rem;min-height:260px;display:flex;flex-direction:column;gap:.875rem;overflow:hidden}
+.cbubble{max-width:82%;padding:.75rem 1rem;border-radius:1rem;font-size:.875rem;line-height:1.55;animation:bubIn .35s var(--ease-out) both}
+@keyframes bubIn{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.cbubble.bot{background:rgba(242,102,74,.12);border-bottom-left-radius:.2rem;align-self:flex-start}
+.cbubble.usr{background:rgba(245,241,232,.08);border-bottom-right-radius:.2rem;align-self:flex-end}
+.ctyping{align-self:flex-start;background:rgba(242,102,74,.1);border-radius:1rem;border-bottom-left-radius:.2rem;padding:.75rem 1rem;display:flex;gap:4px;animation:bubIn .35s var(--ease-out) both}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:rgba(242,102,74,.75);animation:tdot 1.1s ease-in-out infinite}
+.typing-dot:nth-child(2){animation-delay:.18s}
+.typing-dot:nth-child(3){animation-delay:.36s}
+@keyframes tdot{0%,80%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-7px);opacity:1}}
+.chat-wave{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
+.wave-bars{display:flex;align-items:flex-end;gap:2px;height:20px}
+.wbar{width:3px;border-radius:2px;background:var(--coral);animation:wbAnim .7s ease-in-out infinite alternate}
+.wbar:nth-child(2){animation-delay:.1s}.wbar:nth-child(3){animation-delay:.2s}.wbar:nth-child(4){animation-delay:.15s}.wbar:nth-child(5){animation-delay:.05s}.wbar:nth-child(6){animation-delay:.25s}.wbar:nth-child(7){animation-delay:.3s}.wbar:nth-child(8){animation-delay:.12s}
+@keyframes wbAnim{0%{height:3px}100%{height:18px}}
+.wave-lbl{font-size:.75rem;color:var(--fg-muted)}
+.wave-timer{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--fg-muted)}
+
+/* ═══════════════
+   VAPI — Aria dans card Téléphone
+═══════════════ */
+/* #vapi-idle et #vapi-active : layout géré en inline sur l'élément */
+#vapi-idle{display:flex;flex-direction:row;align-items:center;gap:.875rem;flex-shrink:0}
+#vapi-active{display:none;align-items:center;gap:1.25rem;flex-shrink:0}
+.btn-call{display:inline-flex;align-items:center;gap:.875rem;padding:1.25rem 3rem;border-radius:var(--rpill);background:var(--fg);color:var(--bg);font-size:1rem;font-weight:500;position:relative;overflow:hidden;transition:transform .25s,box-shadow .3s,color .3s}
+.btn-call::before{content:'';position:absolute;inset:0;background:var(--coral);transform:translateX(-101%);transition:transform .35s var(--ease)}
+.btn-call:hover::before{transform:translateX(0)}
+.btn-call > *{position:relative;z-index:1}
+.btn-call:hover{transform:translateY(-2px);box-shadow:0 0 45px rgba(242,102,74,.35);color:#fff}
+.vapi-waves{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:44px;margin:1.5rem 0}
+.vwbar{width:4px;border-radius:3px;background:var(--coral);height:4px;animation:vidle 1.5s ease-in-out infinite alternate}
+.vwbar.speaking{animation:vspeak .35s ease-in-out infinite alternate}
+.vwbar:nth-child(2){animation-delay:.08s}.vwbar:nth-child(3){animation-delay:.16s}.vwbar:nth-child(4){animation-delay:.12s}.vwbar:nth-child(5){animation-delay:.04s}.vwbar:nth-child(6){animation-delay:.2s}.vwbar:nth-child(7){animation-delay:.24s}.vwbar:nth-child(8){animation-delay:.1s}.vwbar:nth-child(9){animation-delay:.18s}.vwbar:nth-child(10){animation-delay:.06s}
+@keyframes vidle{0%{height:4px}100%{height:10px}}
+@keyframes vspeak{0%{height:4px}100%{height:32px}}
+.btn-hangup{width:auto;padding:.5rem 1.25rem;border-radius:var(--rpill);background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:.8125rem;font-weight:500;transition:background .25s}
+.btn-hangup:hover{background:rgba(239,68,68,.22)}
+
+/* ═══════════════
+   PORTFOLIO
+═══════════════ */
+#portfolio{background:var(--bg)}
+.portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:5rem}
+.pcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:transform .4s var(--ease),border-color .4s}
+.pcard:hover{transform:translateY(-7px);border-color:rgba(245,241,232,.22)}
+.pimg{height:220px;position:relative;overflow:hidden}
+.pimg-bg{position:absolute;inset:0;transition:transform .7s var(--ease)}
+.pcard:hover .pimg-bg{transform:scale(1.07)}
+.pcard:nth-child(1) .pimg-bg{background:linear-gradient(135deg,#150e08 0%,#3a160c 50%,#150e08 100%)}
+.pcard:nth-child(2) .pimg-bg{background:linear-gradient(135deg,#09091a 0%,#190f3e 50%,#09091a 100%)}
+.pcard:nth-child(3) .pimg-bg{background:linear-gradient(135deg,#090e09 0%,#0e2010 50%,#090e09 100%)}
+.pimg-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:6rem;font-weight:300;letter-spacing:-.05em;color:rgba(245,241,232,.12);transition:color .4s}
+.pcard:hover .pimg-num{color:rgba(245,241,232,.22)}
+.ptag{position:absolute;top:1rem;left:1rem;padding:.25rem .75rem;border-radius:var(--rpill);background:rgba(10,10,10,.85);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-dim);backdrop-filter:blur(8px)}
+.pbody{padding:1.75rem}
+.ptitle{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;letter-spacing:-.02em;margin-bottom:.375rem}
+.ptype{font-size:.8125rem;color:var(--fg-dim);margin-bottom:1.25rem}
+.presult{display:flex;align-items:center;gap:.875rem;padding-top:1.125rem;border-top:1px solid var(--border)}
+.presult-num{font-family:'Fraunces',serif;font-size:2rem;font-weight:300;color:var(--coral);line-height:1;flex-shrink:0}
+.presult-txt{font-size:.8125rem;color:var(--fg-dim);line-height:1.35}
+
+/* ═══════════════
+   TEMOIGNAGES
+═══════════════ */
+#temoignages{background:var(--bg2);border-top:1px solid var(--border)}
+.tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:5rem}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:2.5rem;transition:border-color .3s,transform .3s}
+.tcard:hover{border-color:rgba(245,241,232,.22);transform:translateY(-3px)}
+.tquote{font-family:'Fraunces',serif;font-size:5rem;line-height:.8;color:rgba(242,102,74,.32);display:block;margin-bottom:-.75rem}
+.ttext{font-family:'Fraunces',serif;font-size:clamp(1.1rem,1.9vw,1.35rem);font-weight:300;line-height:1.45;letter-spacing:-.01em;margin-bottom:2rem}
+.tmeta{display:flex;align-items:center;gap:1rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tav{width:2.5rem;height:2.5rem;border-radius:50%;background:linear-gradient(135deg,rgba(242,102,74,.5),rgba(139,101,217,.5));display:flex;align-items:center;justify-content:center;font-size:.875rem}
+.tname{font-size:.875rem;font-weight:500}
+.trole{font-size:.75rem;color:var(--fg-muted)}
+.tstars{margin-left:auto;color:var(--coral);font-size:.75rem;letter-spacing:2px}
+
+/* ═══════════════
+   PROCESS
+═══════════════ */
+#process{background:var(--bg)}
+.plist{margin-top:5rem;border-top:1px solid var(--border)}
+.pitem{padding:2.25rem 0;border-bottom:1px solid var(--border);transition:padding-left .4s var(--ease)}
+.pitem:hover{padding-left:1.25rem}
+.pitem-hdr{display:flex;align-items:center;gap:2rem}
+.pnum{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.18em;color:var(--coral);flex-shrink:0;width:3.5rem}
+.ptit{font-family:'Fraunces',serif;font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:300;letter-spacing:-.03em;flex:1}
+.parr{font-size:1.5rem;color:var(--fg-muted);transition:color .3s,transform .3s;flex-shrink:0}
+.pitem:hover .parr{color:var(--coral);transform:translate(4px,-4px)}
+.pdesc{font-size:.875rem;color:var(--fg-dim);line-height:1.7;margin-top:.875rem;margin-left:5.5rem;max-width:580px}
+
+/* ═══════════════
+   CONTACT
+═══════════════ */
+#contact{background:var(--bg2);border-top:1px solid var(--border);text-align:center;position:relative;overflow:hidden}
+.contact-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(242,102,74,.13) 0%,transparent 70%);pointer-events:none}
+.contact-inner{position:relative;z-index:1}
+.ctitle{font-family:'Fraunces',serif;font-size:clamp(4rem,10vw,10rem);font-weight:300;line-height:.92;letter-spacing:-.05em}
+.ctitle em{font-style:italic;color:var(--coral)}
+.csub{font-size:1rem;color:var(--fg-dim);margin:2rem auto 3rem;max-width:400px}
+.btn-primary{display:inline-flex;align-items:center;gap:.75rem;padding:1.125rem 2.75rem;border-radius:var(--rpill);background:var(--coral);color:#fff;font-size:.9375rem;font-weight:500;transition:transform .25s,box-shadow .3s,gap .3s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(242,102,74,.4);gap:1.5rem}
+.cbadges{display:flex;align-items:center;justify-content:center;gap:2.5rem;margin-top:2.5rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-muted)}
+.cbadge-dot{width:5px;height:5px;border-radius:50%;background:var(--coral);display:inline-block;margin-right:.5rem}
+
+/* ═══════════════
+   FOOTER
+═══════════════ */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:3rem 0}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:2rem}
+.footer-logo{font-family:'Fraunces',serif;font-size:1.125rem;font-weight:300}
+.footer-logo em{font-style:italic;color:var(--coral)}
+.footer-nav{display:flex;align-items:center;gap:2rem;flex-wrap:wrap}
+.footer-nav a{font-size:.8125rem;color:var(--fg-dim);transition:color .2s}
+.footer-nav a:hover{color:var(--fg)}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.15em;color:var(--fg-muted)}
+
+/* ═══════════════
+   RESPONSIVE
+═══════════════ */
+@media(max-width:1024px){
+  .services-grid{grid-template-columns:1fr}
+  .srv{border-right:none;border-bottom:1px solid var(--border)}
+  .srv:last-child{border-bottom:none}
+  .chat-layout{grid-template-columns:1fr;gap:3rem}
+  .portfolio-grid{grid-template-columns:1fr 1fr}
+  .tgrid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .container{padding:0 1.5rem}
+  section{padding:5rem 0}
+  header{padding:1.25rem 1.5rem}
+  nav{display:none}
+  .hero-orb-wrap{display:none}
+  .hero-title{font-size:clamp(4rem,16vw,8rem)}
+  .hero-bottom{flex-direction:column;align-items:flex-start;gap:1.5rem}
+  .s-title{font-size:clamp(2.75rem,8vw,4.5rem)}
+  .portfolio-grid{grid-template-columns:1fr}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+  .cbadges{flex-direction:column;gap:1rem;align-items:flex-start}
+  .pdesc{margin-left:4rem}
+  .ctitle{font-size:clamp(3rem,10vw,5.5rem)}
+}
+</style>
+</head>
+<body>
+
+<!-- Curseur personnalisé -->
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- ═══ HEADER ═══ -->
+<header id="siteHeader">
+  <a href="#hero" class="logo">Kraft<em>You</em></a>
+  <nav>
+    <a href="#services">Services</a>
+    <a href="#chat-demo">Agents IA</a>
+    <a href="#portfolio">Projets</a>
+    <a href="#process">Process</a>
+  </nav>
+  <a href="#contact" class="btn-nav">Réserver un appel →</a>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-bg"></div>
+
+  <div class="hero-meta">
+    <div class="hero-tag">
+      <span class="hero-tag-dot"></span>
+      <span>Agency · Est. 2024</span>
+    </div>
+    <div class="hero-tag">Édition 01 — 2026</div>
+  </div>
+
+  <div class="hero-title-area">
+    <h1 class="hero-title" id="heroTitle">KraftYou</h1>
+    <div class="hero-orb-wrap" id="heroOrb">
+      <div class="hero-orb o1"></div>
+      <div class="hero-orb o2"></div>
+      <div class="hero-orb o3"></div>
+    </div>
+  </div>
+
+  <div class="hero-bottom">
+    <p class="hero-tagline" id="heroTagline">
+      Studio créatif &amp; IA — nous construisons des sites<br>
+      cinématiques et des employés IA qui travaillent<br>
+      pour vous 24h/24, 7j/7.
+    </p>
+    <div class="hero-cta-wrap" id="heroCta">
+      <a href="#services" class="btn-hero">Découvrir <span>→</span></a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══ MARQUEE ═══ -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">Sites web premium<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Agents IA téléphoniques<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Réservations automatisées<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Nexus IA · SaaS<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Support client 24/7<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Workflows automatisés<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Sites web premium<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Agents IA téléphoniques<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Réservations automatisées<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Nexus IA · SaaS<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Support client 24/7<span class="m-sep">✦</span></div>
+    <div class="marquee-item">Workflows automatisés<span class="m-sep">✦</span></div>
+  </div>
+  <div class="mfade mfade-l"></div>
+  <div class="mfade mfade-r"></div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section id="services">
+  <div class="container">
+    <div class="label reveal"><div class="label-line"></div><span class="label-text">01 · Nos offres</span></div>
+    <h2 class="s-title reveal d1">Trois niveaux.<br><em>Une vision.</em></h2>
+    <p style="margin-top:1.5rem;font-size:.9375rem;color:var(--fg-dim);max-width:480px" class="reveal d2">De la création de site à la plateforme IA complète — choisissez votre niveau d'automatisation.</p>
+    <div class="services-grid reveal d2">
+      <!-- Carte 1 -->
+      <div class="srv">
+        <div class="srv-glow"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="srv-num">01</span>
+          <span class="srv-badge">Fondation</span>
+        </div>
+        <h3 class="srv-title">Sites web premium</h3>
+        <p class="srv-desc">Un site moderne, rapide et taillé pour convertir vos visiteurs en clients. Animation cinématique, SEO natif, livré en 3–5 semaines.</p>
+        <ul class="srv-list">
+          <li><span class="srv-dot"></span>Design sur-mesure cinématique</li>
+          <li><span class="srv-dot"></span>Performance &amp; SEO natif</li>
+          <li><span class="srv-dot"></span>CMS headless ou statique</li>
+          <li><span class="srv-dot"></span>Responsive parfait</li>
+        </ul>
+        <div class="srv-footer">
+          <span class="srv-price">Sur devis</span>
+          <a href="#contact" class="srv-arrow">→</a>
+        </div>
+      </div>
+      <!-- Carte 2 -->
+      <div class="srv">
+        <div class="srv-glow"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="srv-num">02</span>
+          <span class="srv-badge">★ Populaire</span>
+        </div>
+        <h3 class="srv-title">Site + Agent IA</h3>
+        <p class="srv-desc">Votre site web livré avec un agent IA téléphonique opérationnel 24h/24, branché à votre stack métier.</p>
+        <ul class="srv-list">
+          <li><span class="srv-dot"></span>Agent IA téléphonique dédié</li>
+          <li><span class="srv-dot"></span>Réservations &amp; commandes auto</li>
+          <li><span class="srv-dot"></span>Support client IA 24/7</li>
+          <li><span class="srv-dot"></span>Dashboard de monitoring</li>
+        </ul>
+        <div class="srv-footer">
+          <span class="srv-price">Sur devis</span>
+          <a href="#contact" class="srv-arrow">→</a>
+        </div>
+      </div>
+      <!-- Carte 3 -->
+      <div class="srv">
+        <div class="srv-glow"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="srv-num">03</span>
+          <span class="srv-badge">Plateforme SaaS</span>
+        </div>
+        <h3 class="srv-title">Nexus IA</h3>
+        <p class="srv-desc">L'infrastructure pour créer, gérer et monitorer vos employés IA en toute autonomie. Pensé pour scaler.</p>
+        <ul class="srv-list">
+          <li><span class="srv-dot"></span>Agents IA illimités</li>
+          <li><span class="srv-dot"></span>Analytics temps réel</li>
+          <li><span class="srv-dot"></span>+50 intégrations API natives</li>
+          <li><span class="srv-dot"></span>Hébergement EU · RGPD natif</li>
+        </ul>
+        <div class="srv-footer">
+          <span class="srv-price">Sur devis</span>
+          <a href="#contact" class="srv-arrow">→</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CHAT DEMO ═══ -->
+<section id="chat-demo">
+  <div class="container">
+    <div class="chat-layout">
+      <div>
+        <div class="label reveal"><div class="label-line"></div><span class="label-text">02 · Agents IA</span></div>
+        <h2 class="s-title reveal d1">Des employés IA<br><em>qui ne dorment jamais.</em></h2>
+        <p style="margin-top:1.5rem;font-size:.9375rem;color:var(--fg-dim);line-height:1.75;max-width:440px" class="reveal d2">Téléphone, support, réservations, qualification de leads. Vos agents IA prennent les appels et closent les rendez-vous — pendant que vous scalez.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-top:2.5rem">
+          <!-- Card Téléphone — Aria -->
+          <div class="reveal d2" style="grid-column:1/-1">
+            <div id="aria-section" style="border:1px solid rgba(255,255,255,0.15); border-radius:16px; padding:24px; max-width:480px;">
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#e8572a,#c44a22);display:grid;place-items:center;font-size:18px;">A</div>
+                <div>
+                  <div style="font-weight:500;">Aria · Agent Réservation</div>
+                  <div id="aria-status" style="font-size:11px;color:#888;">Prêt à appeler</div>
+                </div>
+              </div>
+              <button id="aria-call-btn" onclick="startAriaCall()"
+                style="width:100%;padding:14px;border-radius:12px;background:#e8572a;color:white;border:none;font-size:15px;font-weight:500;cursor:pointer;">
+                📞 Appeler Aria maintenant
+              </button>
+            </div>
+          </div>
+          <div class="reveal d3" style="border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;transition:border-color .3s" onmouseenter="this.style.borderColor='rgba(242,102,74,.4)'" onmouseleave="this.style.borderColor='rgba(245,241,232,.1)'">
+            <div style="font-family:'Fraunces',serif;font-size:1.1rem;margin-bottom:.35rem">Réservations</div>
+            <div style="font-size:.8125rem;color:var(--fg-dim)">Google Cal, TheFork, Calendly.</div>
+          </div>
+          <div class="reveal d3" style="border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;transition:border-color .3s" onmouseenter="this.style.borderColor='rgba(242,102,74,.4)'" onmouseleave="this.style.borderColor='rgba(245,241,232,.1)'">
+            <div style="font-family:'Fraunces',serif;font-size:1.1rem;margin-bottom:.35rem">Support</div>
+            <div style="font-size:.8125rem;color:var(--fg-dim)">Réponses 24/7, escalade humaine.</div>
+          </div>
+          <div class="reveal d4" style="border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;transition:border-color .3s" onmouseenter="this.style.borderColor='rgba(242,102,74,.4)'" onmouseleave="this.style.borderColor='rgba(245,241,232,.1)'">
+            <div style="font-family:'Fraunces',serif;font-size:1.1rem;margin-bottom:.35rem">CRM</div>
+            <div style="font-size:.8125rem;color:var(--fg-dim)">Lead scoring, relances auto.</div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-widget reveal d3">
+        <div class="chat-hdr">
+          <div class="chat-agent-info">
+            <div class="chat-av">A<div class="chat-av-dot"></div></div>
+            <div>
+              <div class="chat-name">Aria · Agent Réservation</div>
+              <div class="chat-status">● En ligne · Latence 240ms</div>
+            </div>
+          </div>
+          <div class="live-badge"><div class="live-dot"></div><span class="live-txt">En direct</span></div>
+        </div>
+        <div class="chat-msgs" id="chatMessages"></div>
+        <div class="chat-wave">
+          <div class="wave-bars">
+            <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+            <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+            <div class="wbar"></div><div class="wbar"></div>
+          </div>
+          <span class="wave-lbl">Aria parle · synthèse vocale</span>
+          <span class="wave-timer" id="chatTimer">00:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PORTFOLIO ═══ -->
+<section id="portfolio">
+  <div class="container">
+    <div class="label reveal"><div class="label-line"></div><span class="label-text">03 · Projets réalisés</span></div>
+    <h2 class="s-title reveal d1">Ce qu'on a<br><em>construit.</em></h2>
+    <p style="margin-top:1.5rem;font-size:.9375rem;color:var(--fg-dim);max-width:480px;line-height:1.75" class="reveal d2">Chaque projet, une transformation. Voici ce que ça donne — avant et après.</p>
+
+    <!-- Projet 1 -->
+    <div class="reveal d2" style="margin-top:5rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+      <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:.5rem">01 · À remplacer par votre projet</div>
+          <div style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;letter-spacing:-.02em">Nom du client</div>
+          <div style="font-size:.8125rem;color:var(--fg-dim);margin-top:.25rem">Type de projet · Service livré</div>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.35rem 1rem;border-radius:100px;border:1px solid var(--border);color:var(--fg-dim)">Site + Agent IA</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr">
+        <!-- Avant -->
+        <div style="border-right:1px solid var(--border)">
+          <div style="padding:.875rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.625rem">
+            <span style="width:8px;height:8px;border-radius:50%;background:rgba(239,68,68,.7);display:inline-block"></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-muted)">Avant</span>
+          </div>
+          <div style="height:300px;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;cursor:pointer;transition:background .3s;position:relative;overflow:hidden" onmouseenter="this.style.background='var(--bg2)'" onmouseleave="this.style.background='var(--bg3)'">
+            <!-- Zone de dépôt screenshot AVANT -->
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(245,241,232,.2)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-muted);text-align:center">Glissez votre screenshot<br>ou cliquez pour insérer</div>
+            <div style="position:absolute;inset:0;border:2px dashed rgba(245,241,232,.08);border-radius:0;pointer-events:none"></div>
+          </div>
+        </div>
+        <!-- Après -->
+        <div>
+          <div style="padding:.875rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.625rem">
+            <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;animation:pulse-g 1.5s ease-in-out infinite"></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-muted)">Après</span>
+          </div>
+          <div style="height:300px;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;cursor:pointer;transition:background .3s;position:relative;overflow:hidden" onmouseenter="this.style.background='var(--bg2)'" onmouseleave="this.style.background='var(--bg3)'">
+            <!-- Zone de dépôt screenshot APRÈS -->
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(242,102,74,.35)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-muted);text-align:center">Glissez votre screenshot<br>ou cliquez pour insérer</div>
+            <div style="position:absolute;inset:0;border:2px dashed rgba(242,102,74,.15);border-radius:0;pointer-events:none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projet 2 -->
+    <div class="reveal d3" style="margin-top:2rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+      <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:.5rem">02 · À remplacer par votre projet</div>
+          <div style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;letter-spacing:-.02em">Nom du client</div>
+          <div style="font-size:.8125rem;color:var(--fg-dim);margin-top:.25rem">Type de projet · Service livré</div>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.35rem 1rem;border-radius:100px;border:1px solid rgba(139,101,217,.4);color:#a88ee0">Nexus IA</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr">
+        <div style="border-right:1px solid var(--border)">
+          <div style="padding:.875rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.625rem">
+            <span style="width:8px;height:8px;border-radius:50%;background:rgba(239,68,68,.7);display:inline-block"></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-muted)">Avant</span>
+          </div>
+          <div style="height:300px;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;cursor:pointer;transition:background .3s;position:relative" onmouseenter="this.style.background='var(--bg2)'" onmouseleave="this.style.background='var(--bg3)'">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(245,241,232,.2)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-muted);text-align:center">Glissez votre screenshot<br>ou cliquez pour insérer</div>
+            <div style="position:absolute;inset:0;border:2px dashed rgba(245,241,232,.08);pointer-events:none"></div>
+          </div>
+        </div>
+        <div>
+          <div style="padding:.875rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.625rem">
+            <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;animation:pulse-g 1.5s ease-in-out infinite"></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-muted)">Après</span>
+          </div>
+          <div style="height:300px;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;cursor:pointer;transition:background .3s;position:relative" onmouseenter="this.style.background='var(--bg2)'" onmouseleave="this.style.background='var(--bg3)'">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(139,101,217,.4)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-muted);text-align:center">Glissez votre screenshot<br>ou cliquez pour insérer</div>
+            <div style="position:absolute;inset:0;border:2px dashed rgba(139,101,217,.2);pointer-events:none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROCESS ═══ -->
+<section id="process">
+  <div class="container">
+    <div class="label reveal"><div class="label-line"></div><span class="label-text">04 · Process</span></div>
+    <h2 class="s-title reveal d1">De l'idée au live<br><em>en 5 mouvements.</em></h2>
+    <div class="plist">
+      <div class="pitem reveal">
+        <div class="pitem-hdr"><span class="pnum">01</span><h3 class="ptit">Stratégie</h3><span class="parr">↗</span></div>
+        <p class="pdesc">Audit de votre business, identification des points de friction, plan d'automatisation IA sur-mesure.</p>
+      </div>
+      <div class="pitem reveal d1">
+        <div class="pitem-hdr"><span class="pnum">02</span><h3 class="ptit">Design</h3><span class="parr">↗</span></div>
+        <p class="pdesc">Direction artistique sur-mesure, prototypage cinématique, design system propre et cohérent.</p>
+      </div>
+      <div class="pitem reveal d2">
+        <div class="pitem-hdr"><span class="pnum">03</span><h3 class="ptit">Développement</h3><span class="parr">↗</span></div>
+        <p class="pdesc">Code premium, performance native, SEO, animations fluides, mobile parfait.</p>
+      </div>
+      <div class="pitem reveal d3">
+        <div class="pitem-hdr"><span class="pnum">04</span><h3 class="ptit">Intégration IA</h3><span class="parr">↗</span></div>
+        <p class="pdesc">Agents téléphoniques, support, réservations — connectés à vos outils existants en quelques jours.</p>
+      </div>
+      <div class="pitem reveal d4">
+        <div class="pitem-hdr"><span class="pnum">05</span><h3 class="ptit">Automation</h3><span class="parr">↗</span></div>
+        <p class="pdesc">Mise en orbite, monitoring, itération continue. Vos employés IA travaillent. Vous scalez.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section id="contact">
+  <div class="contact-glow"></div>
+  <div class="container contact-inner">
+    <div class="label reveal" style="justify-content:center"><div class="label-line"></div><span class="label-text">05 · Contact</span><div class="label-line"></div></div>
+    <h2 class="ctitle reveal d1">Travaillons<br><em>ensemble.</em></h2>
+    <p class="csub reveal d2">Un appel de 15 minutes. Un audit honnête.<br>Un plan pour transformer votre business.</p>
+    <div class="reveal d3">
+      <a href="mailto:kraftyou.agency@gmail.com" class="btn-primary">Réserver un appel stratégique <span>→</span></a>
+    </div>
+    <div class="cbadges reveal d4">
+      <span><span class="cbadge-dot"></span>Réponse sous 24h</span>
+      <span><span class="cbadge-dot"></span>Devis gratuit</span>
+      <span><span class="cbadge-dot"></span>Sans engagement</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">Kraft<em>You</em><span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.18em;color:var(--fg-muted);margin-left:.75rem">· Agency · 2026</span></div>
+      <nav class="footer-nav">
+        <a href="#services">Services</a>
+        <a href="#chat-demo">Agents IA</a>
+        <a href="#portfolio">Projets</a>
+        <a href="#process">Process</a>
+        <a href="mailto:kraftyou.agency@gmail.com">kraftyou.agency@gmail.com</a>
+      </nav>
+      <span class="footer-copy">© 2026 KraftYou Agency</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════
+   KRAFTYOU — JAVASCRIPT
+═══════════════════════════════════════ */
+
+/* ── Curseur ── */
+const ring = document.getElementById('cursorRing');
+const dot  = document.getElementById('cursorDot');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+});
+(function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+});
+
+/* ── Header scroll ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('siteHeader').classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ── Hero letter reveal ── */
+(function() {
+  const title = document.getElementById('heroTitle');
+  const kraft = 'Kraft', you = 'You';
+  title.innerHTML = '';
+  let idx = 0;
+  [...kraft].forEach(c => {
+    const s = document.createElement('span');
+    s.className = 'ch';
+    s.textContent = c;
+    s.style.transitionDelay = (idx * 0.065 + 0.15) + 's';
+    title.appendChild(s); idx++;
+  });
+  const em = document.createElement('em');
+  em.className = 'hero-title-italic';
+  [...you].forEach(c => {
+    const s = document.createElement('span');
+    s.className = 'ch';
+    s.textContent = c;
+    s.style.transitionDelay = (idx * 0.065 + 0.15) + 's';
+    em.appendChild(s); idx++;
+  });
+  title.appendChild(em);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    title.querySelectorAll('.ch').forEach(s => s.classList.add('show'));
+    document.getElementById('heroOrb').classList.add('show');
+    document.getElementById('heroTagline').classList.add('show');
+    document.getElementById('heroCta').classList.add('show');
+  }));
+})();
+
+/* ── Scroll reveal ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('up'); obs.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── Chat animation ── */
+(function() {
+  const box = document.getElementById('chatMessages');
+  if (!box) return;
+  const timer = document.getElementById('chatTimer');
+  const conv = [
+    { s:'usr', t:'Bonsoir, je voudrais réserver une table pour 4 personnes' },
+    { s:'bot', t:'Bonsoir ! Quelle date vous conviendrait ?' },
+    { s:'usr', t:'Vendredi soir, vers 20h' },
+    { s:'bot', t:'Parfait, j\'ai une table en terrasse à 20h15. Je confirme par SMS ?' },
+    { s:'usr', t:'Oui merci' },
+    { s:'bot', t:'✓ Réservation confirmée. À vendredi !' }
+  ];
+  function bubble(m) {
+    const d = document.createElement('div');
+    d.className = 'cbubble ' + m.s;
+    d.textContent = m.t;
+    return d;
+  }
+  function typing() {
+    const d = document.createElement('div');
+    d.className = 'ctyping'; d.id = 'cTyping';
+    d.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+    return d;
+  }
+  function rmTyping() { document.getElementById('cTyping')?.remove(); }
+  let tms = [], secs = 0, timerInt;
+  function at(ms, fn) { tms.push(setTimeout(fn, ms)); }
+  function run() {
+    tms.forEach(clearTimeout); tms = [];
+    clearInterval(timerInt); secs = 0;
+    box.innerHTML = ''; box.style.opacity = '1'; box.style.transition = '';
+    timerInt = setInterval(() => {
+      secs++;
+      const m = String(Math.floor(secs/60)).padStart(2,'0');
+      const s = String(secs%60).padStart(2,'0');
+      if (timer) timer.textContent = m+':'+s;
+    }, 1000);
+    at(800,   () => box.appendChild(bubble(conv[0])));
+    at(2000,  () => box.appendChild(typing()));
+    at(3400,  () => { rmTyping(); box.appendChild(bubble(conv[1])); });
+    at(5000,  () => box.appendChild(bubble(conv[2])));
+    at(6200,  () => box.appendChild(typing()));
+    at(7900,  () => { rmTyping(); box.appendChild(bubble(conv[3])); });
+    at(9400,  () => box.appendChild(bubble(conv[4])));
+    at(10400, () => box.appendChild(typing()));
+    at(11800, () => { rmTyping(); box.appendChild(bubble(conv[5])); });
+    at(15500, () => { box.style.transition='opacity .6s'; box.style.opacity='0'; clearInterval(timerInt); });
+    at(16300, () => run());
+  }
+  setTimeout(run, 1200);
+})();
+
+</script>
+
+<script>
+(function(){
+  var v=null, active=false;
+
+  window.startAriaCall=function(){
+    console.log('Clic bouton, window.Vapi:', typeof window.Vapi);
+    if(typeof window.Vapi==='undefined'){
+      document.getElementById('aria-status').textContent='⏳ SDK en cours, réessaie...';
+      return;
+    }
+    if(!v){
+      v=new window.Vapi('6e707b41-d055-47a9-a8f8-0e5d1520b10e');
+      v.on('call-start',function(){
+        active=true;
+        document.getElementById('aria-status').textContent='🟢 En ligne...';
+        document.getElementById('aria-call-btn').textContent='🔴 Raccrocher';
+        console.log('Appel démarré');
+      });
+      v.on('call-end',function(){
+        active=false;
+        document.getElementById('aria-status').textContent='Appel terminé';
+        document.getElementById('aria-call-btn').textContent='📞 Appeler Aria';
+        console.log('Appel terminé');
+      });
+      v.on('error',function(e){
+        console.error('Erreur Vapi:',e);
+        document.getElementById('aria-status').textContent='Erreur connexion';
+      });
+    }
+    if(!active){
+      v.start('fc18614f-0a8d-40c3-ab83-54e4e49c367d');
+      document.getElementById('aria-status').textContent='⏳ Connexion...';
+    } else {
+      v.stop();
+    }
+  };
+})();
+</script>
+</body>
+</html>
